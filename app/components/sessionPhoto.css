@@ -1,0 +1,28 @@
+.session-photo {
+  position: relative;
+  display: inline-block;
+}
+
+.session-photo img {
+  width: 200px;
+  display: block;
+}
+
+.session-photo .timestamp {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+
+  font-family: "VT323", monospace;
+  font-size: 18px;
+  letter-spacing: 1px;
+
+  color: #ff9f1a;
+
+  text-shadow:
+    0 0 2px rgba(255, 159, 26, 0.8),
+    0 0 6px rgba(255, 159, 26, 0.6);
+
+  opacity: 0.9;
+  pointer-events: none;
+}

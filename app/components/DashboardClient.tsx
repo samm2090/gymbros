@@ -17,7 +17,7 @@ type Props = {
   users: {
     _id: string;
     name: string;
-    workoutSessions: { photoUrl: string }[];
+    workoutSessions: { photoUrl: string; timestamp: Date }[];
   }[];
 };
 
@@ -46,16 +46,36 @@ export default function DashboardClient({ session, users }: Props) {
     const result = await res.json();
     setIsLoading(false);
 
-    if (result.success) {
+    if (result.userSessions) {
+      const today = new Date();
+      const week = getWeekNumber(today);
+      const weekStart = formatDate(getWeekStartDate(today));
+      let message = `Semana ${week} (${weekStart}):\n${result.userSessions
+        .map((user: { name: string; workoutSessions: [] }) => {
+          return `${user.name} - ${user.workoutSessions?.length}`;
+        })
+        .join("\n")}`;
+      message += `\nVer en https://gymbros-beta.vercel.app`;
+
+      message = encodeURIComponent(message);
+      const url = `https://wa.me/?text=${message}`;
+      window.open(url, "_blank");
+
       router.refresh();
     }
   };
 
   return (
     <div className="flex flex-col gap-10 min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <h1 className="text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-        Gymbros, Hola {session.user?.name}
-      </h1>
+      <div className="mt-10 justify-items-center items-center gap-5 flex flex-col">
+        <h1 className="text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+          Gymbros
+        </h1>
+
+        <h3 className="text-1xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+          Hola, {session.user?.name}
+        </h3>
+      </div>
 
       <div className="justify-items-center gap-5 flex flex-col">
         <h3 className="text-xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">

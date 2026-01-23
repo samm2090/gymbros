@@ -1,10 +1,12 @@
 "use client";
 
+import SessionPhoto from "./SessionPhoto";
+
 type Props = {
   users: {
     _id: string;
     name: string;
-    workoutSessions: { photoUrl: string }[];
+    workoutSessions: { photoUrl: string; timestamp: Date }[];
   }[];
 };
 
@@ -18,7 +20,7 @@ export default function TableRanking({ users }: Props) {
               Bro
             </th>
             <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-400">
-              # Veces
+              #
             </th>
             <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-400">
               Foto
@@ -37,7 +39,10 @@ export default function TableRanking({ users }: Props) {
               <td className="px-4 py-3">{user?.workoutSessions.length}</td>
 
               <td className="px-4 py-3">
-                <img width="200" src={user?.workoutSessions[0]?.photoUrl} />
+                <SessionPhoto
+                  photoUrl={user?.workoutSessions[0]?.photoUrl}
+                  timestamp={new Date(user?.workoutSessions[0]?.timestamp)}
+                ></SessionPhoto>
               </td>
             </tr>
           ))}

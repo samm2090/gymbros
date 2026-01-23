@@ -27,7 +27,7 @@ export async function getUsersSessions(userIds?: string[]): Promise<
   {
     _id: string;
     name: string;
-    workoutSessions: { photoUrl: string }[];
+    workoutSessions: { photoUrl: string; timestamp: Date }[];
   }[]
 > {
   const db = await getDB();

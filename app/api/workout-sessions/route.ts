@@ -1,5 +1,8 @@
 import { authOptions } from "@/lib/infrastructure/google-auth.infra";
-import { recordSession } from "@/lib/services/workout-sessions.service";
+import {
+  getUsersSessions,
+  recordSession,
+} from "@/lib/services/workout-sessions.service";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -10,5 +13,7 @@ export async function POST(req: Request) {
 
   await recordSession(session?.user?.id || "", file);
 
-  return NextResponse.json({ success: true });
+  const userSessions = await getUsersSessions();
+
+  return NextResponse.json({ userSessions });
 }
