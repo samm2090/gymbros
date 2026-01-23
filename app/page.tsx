@@ -1,17 +1,49 @@
-import Image from "next/image";
+"use client";
+
+import { useRef } from "react";
 
 export default function Home() {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const openCamera = () => {
+    inputRef.current?.click();
+  };
+
+  const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    console.log(file);
+  };
+  
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
+    <div className="flex flex-col gap-10 min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+      <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+        Gymbros
+      </h1>
+      <button
+        className="flex h-12 items-center 
+        justify-center rounded-full border 
+        border-solid border-black/[.08] 
+        px-5 transition-colors hover:border-transparent 
+        hover:bg-black/[.04] dark:border-white/[.145] 
+        dark:hover:bg-[#1a1a1a] cursor-pointer"
+        onClick={openCamera}
+      >
+        Registrar entreno 💪
+      </button>
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={handlePhoto}
+      />
+
+      {/* <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+      
         <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
           <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
             To get started, edit the page.tsx file.
@@ -59,7 +91,8 @@ export default function Home() {
             Documentation
           </a>
         </div>
-      </main>
+      </main> */}
     </div>
   );
 }
+
