@@ -1,18 +1,31 @@
 "use client";
 
+import {
+  formatDate,
+  getWeekEndDate,
+  getWeekNumber,
+  getWeekStartDate,
+} from "@/lib/utils/date";
 import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import TableRanking from "./TableRanking";
 
 type Props = {
   session: Session;
+  users: [];
 };
 
-export default function DashboardClient({ session }: Props) {
+export default function DashboardClient({ session, users }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  const today = new Date();
+  const weekNumber = getWeekNumber(today);
+  const weekStart = formatDate(getWeekStartDate(today));
+  const weekEnd = formatDate(getWeekEndDate(today));
 
   const handlePhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -36,9 +49,17 @@ export default function DashboardClient({ session }: Props) {
 
   return (
     <div className="flex flex-col gap-10 min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <h1 className=" text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+      <h1 className="text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
         Gymbros, Hola {session.user?.name}
       </h1>
+
+      <div className="justify-items-center gap-5 flex flex-col">
+        <h3 className="text-xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+          Semana {weekNumber} ({weekStart} - {weekEnd})
+        </h3>
+        <TableRanking users={users}></TableRanking>
+      </div>
+
       <button
         className="flex h-12 items-center 
         justify-center rounded-full border 
