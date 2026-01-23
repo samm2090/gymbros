@@ -4,7 +4,7 @@ type Props = {
   users: {
     _id: string;
     name: string;
-    workOutSessions: { photoUrl: string }[];
+    workoutSessions: { photoUrl: string }[];
   }[];
 };
 
@@ -34,10 +34,10 @@ export default function TableRanking({ users }: Props) {
             >
               <td className="px-4 py-3 font-medium">{user.name}</td>
 
-              <td className="px-4 py-3">{user?.workOutSessions.length}</td>
+              <td className="px-4 py-3">{user?.workoutSessions.length}</td>
 
               <td className="px-4 py-3">
-                <img width="200" src={user?.workOutSessions[0]?.photoUrl} />
+                <img width="200" src={user?.workoutSessions[0]?.photoUrl} />
               </td>
             </tr>
           ))}

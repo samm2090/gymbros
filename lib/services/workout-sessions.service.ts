@@ -23,9 +23,13 @@ export async function recordSession(userId: string, file: File) {
   return result;
 }
 
-export async function getUsersSessions(userIds?: string[]): Promise<[]> {
-  console.log("a");
-
+export async function getUsersSessions(userIds?: string[]): Promise<
+  {
+    _id: string;
+    name: string;
+    workoutSessions: { photoUrl: string }[];
+  }[]
+> {
   const db = await getDB();
 
   const today = new Date();
@@ -54,7 +58,11 @@ export async function getUsersSessions(userIds?: string[]): Promise<[]> {
       (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
     );
 
-    return { name: user.name, workOutSessions: ownWorkoutSessions };
+    return {
+      _id: String(user._id),
+      name: user.name,
+      workoutSessions: JSON.parse(JSON.stringify(ownWorkoutSessions)),
+    };
   });
 
   // const workoutSessions = await db

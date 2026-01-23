@@ -14,7 +14,11 @@ import TableRanking from "./TableRanking";
 
 type Props = {
   session: Session;
-  users: [];
+  users: {
+    _id: string;
+    name: string;
+    workoutSessions: { photoUrl: string }[];
+  }[];
 };
 
 export default function DashboardClient({ session, users }: Props) {
