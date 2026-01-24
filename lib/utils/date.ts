@@ -10,7 +10,6 @@ export function getWeekNumber(date: Date) {
     Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
   );
 
-  console.log(cloneDate.getUTCDate());
   return Math.ceil(cloneDate.getUTCDate() / 7)
 }
 

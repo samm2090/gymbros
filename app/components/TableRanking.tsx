@@ -6,7 +6,12 @@ type Props = {
   users: {
     _id: string;
     name: string;
-    workoutSessions: { photoUrl: string; timestamp: Date }[];
+    profilePicture: string;
+    isWinner: boolean;
+    workoutSessions: {
+      photoUrl: string;
+      timestamp: Date;
+    }[];
   }[];
 };
 
@@ -34,14 +39,31 @@ export default function TableRanking({ users }: Props) {
               key={String(user._id)}
               className="border-t border-zinc-200 dark:border-zinc-800"
             >
-              <td className="px-4 py-3 font-medium">{user.name}</td>
+              <td className="px-4 py-3 font-medium">
+                {user.name}
+                <div className="flex flex-direction-row">
+                  <img
+                    src={user?.profilePicture || "/profile-placeholder.png"}
+                    alt="profile pic"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                  {user.isWinner ? "👑" : ""}
+                </div>
+              </td>
 
-              <td className="px-4 py-3">{user?.workoutSessions.length}</td>
+              <td className="px-4 py-3">
+                {user?.workoutSessions?.length || 0}/7
+              </td>
 
               <td className="px-4 py-3">
                 <SessionPhoto
                   photoUrl={user?.workoutSessions[0]?.photoUrl}
-                  timestamp={new Date(user?.workoutSessions[0]?.timestamp)}
+                  isWinner={user?.isWinner}
+                  timestamp={
+                    user?.workoutSessions[0]?.timestamp
+                      ? new Date(user?.workoutSessions[0]?.timestamp)
+                      : null
+                  }
                 ></SessionPhoto>
               </td>
             </tr>

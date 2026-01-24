@@ -27,6 +27,8 @@ export async function getUsersSessions(userIds?: string[]): Promise<
   {
     _id: string;
     name: string;
+    profilePicture: string;
+    isWinner: boolean;
     workoutSessions: { photoUrl: string; timestamp: Date }[];
   }[]
 > {
@@ -49,21 +51,43 @@ export async function getUsersSessions(userIds?: string[]): Promise<
     })
     .toArray();
 
-  return users.map((user) => {
-    const ownWorkoutSessions = workoutSessions.filter(
+  let maxWorkoutSessions = 0;
+
+  const response = users.map((user) => {
+    const userWorkoutSessions = workoutSessions.filter(
       (workout) => String(workout.userId) === String(user._id),
     );
 
-    ownWorkoutSessions.sort(
+    userWorkoutSessions.sort(
       (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
+    );
+
+    maxWorkoutSessions = Math.max(
+      maxWorkoutSessions,
+      userWorkoutSessions.length,
     );
 
     return {
       _id: String(user._id),
       name: user.name,
-      workoutSessions: JSON.parse(JSON.stringify(ownWorkoutSessions)),
+      profilePicture: user.profilePicture,
+      workoutSessions: JSON.parse(JSON.stringify(userWorkoutSessions)),
+      isWinner: false,
     };
   });
+
+  response.sort((a, b) => b.workoutSessions.length - a.workoutSessions.length);
+
+  response.forEach((user) => {
+    if (
+      user.workoutSessions.length > 0 &&
+      user.workoutSessions.length === maxWorkoutSessions
+    ) {
+      user.isWinner = true;
+    }
+  });
+
+  return response;
 
   // const workoutSessions = await db
   //   .collection(DbTables.WORKOUT_SESSIONS)

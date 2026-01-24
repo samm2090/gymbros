@@ -17,7 +17,12 @@ type Props = {
   users: {
     _id: string;
     name: string;
-    workoutSessions: { photoUrl: string; timestamp: Date }[];
+    profilePicture: string;
+    isWinner: boolean;
+    workoutSessions: {
+      photoUrl: string;
+      timestamp: Date;
+    }[];
   }[];
 };
 
@@ -30,6 +35,12 @@ export default function DashboardClient({ session, users }: Props) {
   const weekNumber = getWeekNumber(today);
   const weekStart = formatDate(getWeekStartDate(today));
   const weekEnd = formatDate(getWeekEndDate(today));
+
+  const myData = users.find((user) => user._id === session?.user?.id);
+
+  const isWorkoutRegisteredToday = myData?.workoutSessions.some(
+    (workout) => formatDate(new Date(workout.timestamp)) === formatDate(today),
+  );
 
   const handlePhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -50,9 +61,9 @@ export default function DashboardClient({ session, users }: Props) {
       const today = new Date();
       const week = getWeekNumber(today);
       const weekStart = formatDate(getWeekStartDate(today));
-      let message = `Semana ${week} (${weekStart}):\n${result.userSessions
+      let message = `*Semana ${week} (${weekStart}):*\n${result.userSessions
         .map((user: { name: string; workoutSessions: [] }) => {
-          return `${user.name} - ${user.workoutSessions?.length}`;
+          return `- ${user.name} - ${user.workoutSessions?.length}`;
         })
         .join("\n")}`;
       message += `\nVer en https://gymbros-beta.vercel.app`;
@@ -69,51 +80,53 @@ export default function DashboardClient({ session, users }: Props) {
     <div className="flex flex-col gap-10 min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <div className="mt-10 justify-items-center items-center gap-5 flex flex-col">
         <h1 className="text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-          Gymbros
+          Gymbros 🏋️‍♂️
         </h1>
 
         <h3 className="text-1xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
           Hola, {session.user?.name}
         </h3>
       </div>
-
-      <div className="justify-items-center gap-5 flex flex-col">
+      <div className="justify-items-center items-center gap-5 flex flex-col">
         <h3 className="text-xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
           Semana {weekNumber} ({weekStart} - {weekEnd})
         </h3>
         <TableRanking users={users}></TableRanking>
       </div>
-
-      <button
-        className="flex h-12 items-center 
+      {!isWorkoutRegisteredToday && (
+        <>
+          {" "}
+          <button
+            className="flex h-12 items-center 
         justify-center rounded-full border 
         border-solid border-black/[.08] 
         px-5 transition-colors hover:border-transparent 
         hover:bg-black/[.04] dark:border-white/[.145] 
         dark:hover:bg-[#1a1a1a] cursor-pointer"
-        onClick={() => {
-          if (isLoading) return;
-          inputRef.current?.click();
-        }}
-      >
-        {isLoading ? "Procesando..." : "Registrar entreno 💪"}
-      </button>
-
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        className="hidden"
-        onChange={handlePhoto}
-      />
+            onClick={() => {
+              if (isLoading) return;
+              inputRef.current?.click();
+            }}
+          >
+            {isLoading ? "Procesando..." : "Registrar entreno 💪"}
+          </button>
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={handlePhoto}
+          />
+        </>
+      )}
       <button
         className="flex h-10 items-center 
         justify-center rounded-full border 
         border-solid border-black/[.08] 
         px-5 transition-colors hover:border-transparent 
         hover:bg-black/[.04] dark:border-white/[.145] 
-        dark:hover:bg-[#1a1a1a] cursor-pointer text-xs"
+        dark:hover:bg-[#1a1a1a] cursor-pointer text-xs mb-10"
         onClick={() => signOut()}
       >
         Salir

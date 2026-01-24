@@ -1,6 +1,26 @@
 .session-photo {
   position: relative;
   display: inline-block;
+  overflow: visible;
+}
+
+.glow {
+  -webkit-box-shadow: 0px 0px 100px 43px rgba(240, 255, 105, 0.56);
+  -moz-box-shadow: 0px 0px 100px 43px rgba(240, 255, 105, 0.56);
+  box-shadow: 0px 0px 100px 43px rgba(240, 255, 105, 0.56);
+  animation: image-pulse 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes image-pulse {
+  0% {
+    transform: scale(0.98);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(0.98);
+  }
 }
 
 .session-photo img {
