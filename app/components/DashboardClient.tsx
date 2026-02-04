@@ -39,9 +39,9 @@ export default function DashboardClient({ session, users }: Props) {
 
   const myData = users.find((user) => user._id === session?.user?.id);
 
-  const isWorkoutRegisteredToday = myData?.workoutSessions.some(
-    (workout) => formatDate(new Date(workout.timestamp)) === formatDate(today),
-  );
+  const isWorkoutRegisteredToday = myData?.workoutSessions.some((workout) => {
+    return formatDate(new Date(workout.timestamp)) === formatDate(today);
+  });
 
   const registerWorkout = () => {
     if (isLoading) return;
@@ -56,10 +56,12 @@ export default function DashboardClient({ session, users }: Props) {
     const formData = new FormData();
     formData.append("file", file);
 
-    await fetch(`/api/workout-sessions`, {
+    const newWorkout = await fetch(`/api/workout-sessions`, {
       method: "POST",
       body: formData,
     });
+
+    console.log(newWorkout);
 
     setIsLoading(false);
 
@@ -73,17 +75,22 @@ export default function DashboardClient({ session, users }: Props) {
           numberOfSessions++;
         }
 
-        return `- ${user.name} - ${numberOfSessions}`;
+        return `- ${user.name} + ${numberOfSessions}`;
       })
       .join("\n")}`;
-    message += `\nVer en https://gymbros-beta.vercel.app`;
+    // const photoLink = `https://gymbros-beta.vercel.app/photo/${encodeURIComponent("https://vsyncxehkyo2ghiw.public.blob.vercel-storage.com/users/697303ae511947ec13f7f1a3/workout-sessions/f4a813e5-1bf4-4241-a50f-e069d7e905d9.jpg")}`;
+
+    // message += `\nVer en ${photoLink}`;
     setShareMessage(message);
     router.refresh();
   };
 
   const share = () => {
     if (typeof navigator !== "undefined" && navigator.share) {
-      navigator.share({ text: shareMessage });
+      navigator.share({
+        text: shareMessage,
+        url: "https://gymbros-beta.vercel.app/photo/https%3A%2F%2Fvsyncxehkyo2ghiw.public.blob.vercel-storage.com%2Fusers%2F697303ae511947ec13f7f1a3%2Fworkout-sessions%2Ff4a813e5-1bf4-4241-a50f-e069d7e905d9.jpg",
+      });
     } else {
       const url = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`;
       window.open(url, "_blank");
@@ -91,7 +98,7 @@ export default function DashboardClient({ session, users }: Props) {
 
     setTimeout(() => {
       setShareMessage("");
-    }, 2000);
+    }, 5000);
   };
 
   return (
@@ -151,7 +158,9 @@ export default function DashboardClient({ session, users }: Props) {
       {shareMessage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-xl p-6 w-full max-w-sm">
-            <h2 className="text-lg font-semibold text-white">Compartir Ranking 📈</h2>
+            <h2 className="text-lg font-semibold text-black">
+              Compartir Ranking 📈
+            </h2>
             <p className="text-sm text-gray-500 mt-1">
               Comparte el leaderboard con tus bros.
             </p>

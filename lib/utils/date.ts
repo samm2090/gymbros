@@ -6,11 +6,16 @@ export function formatDate(date: Date) {
 }
 
 export function getWeekNumber(date: Date) {
-  const cloneDate = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+  const startUTC = Date.UTC(date.getUTCFullYear(), 0, 1);
+  const nowUTC = Date.UTC(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
   );
 
-  return Math.ceil(cloneDate.getUTCDate() / 7)
+  const days = Math.floor((nowUTC - startUTC) / 86400000) + 1 + new Date(startUTC).getDay();
+  
+  return Math.ceil(days / 7);
 }
 
 export function getWeekStartDate(date: Date) {
