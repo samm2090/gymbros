@@ -12,7 +12,7 @@ export default async function Dashboard() {
   }
 
   const users = await getUsersSessions();
-
+  
   return <DashboardClient users={users} session={session} />;
 }
 

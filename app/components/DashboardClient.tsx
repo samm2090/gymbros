@@ -3,6 +3,7 @@
 import {
   formatDate,
   getRegionCurrentDate,
+  getRegionDate,
   getWeekEndDate,
   getWeekNumber,
   getWeekStartDate,
@@ -34,12 +35,18 @@ export default function DashboardClient({ session, users }: Props) {
   const [sharePhoto, setSharePhoto] = useState(null);
   const router = useRouter();
 
-  const today = new Date();
+  const today = getRegionCurrentDate();
   const weekNumber = getWeekNumber(today);
   const weekStart = formatDate(getWeekStartDate(today));
   const weekEnd = formatDate(getWeekEndDate(today));
 
   const myData = users.find((user) => user._id === session?.user?.id);
+
+  users.forEach((user) => {
+    user.workoutSessions.forEach((session) => {
+      session.timestamp = getRegionDate(session.timestamp);
+    });
+  });
 
   const isWorkoutRegisteredToday = myData?.workoutSessions.some((workout) => {
     return formatDate(new Date(workout.timestamp)) === formatDate(today);
@@ -79,9 +86,9 @@ export default function DashboardClient({ session, users }: Props) {
           numberOfSessions++;
         }
 
-        return `- ${user.name} +${numberOfSessions}`;
+        return `- ${user.name} +${numberOfSessions}${user.isWinner ? " 👑" : ""}`;
       })
-      .join("\n")}`;
+      .join("\n")}\n`;
     setShareMessage(message);
     router.refresh();
   };

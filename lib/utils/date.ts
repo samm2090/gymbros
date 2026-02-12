@@ -4,8 +4,10 @@ export function getRegionCurrentDate(zone = "America/Lima") {
   return DateTime.local().setZone(zone).toJSDate();
 }
 
-export function getRegionDate(date: Date, zone = "America/Lima") {
-  return DateTime.fromJSDate(date).setZone(zone).toJSDate();
+export function getRegionDate(date: Date | string, zone = "America/Lima") {
+  return typeof date === "string"
+    ? DateTime.fromISO(date).setZone(zone).toJSDate()
+    : DateTime.fromJSDate(date).setZone(zone).toJSDate();
 }
 
 export function getWeekDay(date: Date | string) {
@@ -15,31 +17,19 @@ export function getWeekDay(date: Date | string) {
 }
 
 export function formatDate(date: Date) {
-  const dd = String(date.getUTCDate()).padStart(2, "0");
-  const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
-  const yyyy = date.getUTCFullYear();
-  return `${dd}/${mm}/${yyyy}`;
+  return typeof date === "string"
+    ? DateTime.fromISO(date).toFormat("dd/MM/yyyy")
+    : DateTime.fromJSDate(date).toFormat("dd/MM/yyyy");
 }
 
 export function getWeekNumber(date: Date) {
-  const startUTC = Date.UTC(date.getUTCFullYear(), 0, 1);
-  const nowUTC = Date.UTC(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate(),
-  );
-
-  const days =
-    Math.floor((nowUTC - startUTC) / 86400000) +
-    1 +
-    new Date(startUTC).getDay();
-
-  return Math.ceil(days / 7);
+  return typeof date === "string"
+    ? DateTime.fromISO(date).weekNumber
+    : DateTime.fromJSDate(date).weekNumber;
 }
 
 export function getWeekStartDate(date: Date) {
   const dateTime = DateTime.fromJSDate(date);
-
   return dateTime.startOf("week").startOf("day").toJSDate();
 }
 
