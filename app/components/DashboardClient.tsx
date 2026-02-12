@@ -2,6 +2,7 @@
 
 import {
   formatDate,
+  getRegionCurrentDate,
   getWeekEndDate,
   getWeekNumber,
   getWeekStartDate,
@@ -30,6 +31,7 @@ export default function DashboardClient({ session, users }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
+  const [sharePhoto, setSharePhoto] = useState(null);
   const router = useRouter();
 
   const today = new Date();
@@ -56,41 +58,54 @@ export default function DashboardClient({ session, users }: Props) {
     const formData = new FormData();
     formData.append("file", file);
 
-    const newWorkout = await fetch(`/api/workout-sessions`, {
+    const response = await fetch(`/api/workout-sessions`, {
       method: "POST",
       body: formData,
     });
 
-    console.log(newWorkout);
+    const newWorkoutSession = await response.json();
+
+    setSharePhoto(newWorkoutSession.photoUrl);
 
     setIsLoading(false);
 
-    const today = new Date();
+    const today = getRegionCurrentDate();
     const week = getWeekNumber(today);
     const weekStart = formatDate(getWeekStartDate(today));
-    let message = `*Semana ${week} (${weekStart}):*\n${users
+    const message = `*Semana ${week} (${weekStart}):*\n${users
       .map((user) => {
         let numberOfSessions = user.workoutSessions?.length;
         if (user._id === myData?._id) {
           numberOfSessions++;
         }
 
-        return `- ${user.name} + ${numberOfSessions}`;
+        return `- ${user.name} +${numberOfSessions}`;
       })
       .join("\n")}`;
-    // const photoLink = `https://gymbros-beta.vercel.app/photo/${encodeURIComponent("https://vsyncxehkyo2ghiw.public.blob.vercel-storage.com/users/697303ae511947ec13f7f1a3/workout-sessions/f4a813e5-1bf4-4241-a50f-e069d7e905d9.jpg")}`;
-
-    // message += `\nVer en ${photoLink}`;
     setShareMessage(message);
     router.refresh();
   };
 
-  const share = () => {
+  const share = async () => {
     if (typeof navigator !== "undefined" && navigator.share) {
-      navigator.share({
+      const shareData: ShareData = {
+        title: "🔥Entrenado!🔥",
         text: shareMessage,
-        url: "https://gymbros-beta.vercel.app/photo/https%3A%2F%2Fvsyncxehkyo2ghiw.public.blob.vercel-storage.com%2Fusers%2F697303ae511947ec13f7f1a3%2Fworkout-sessions%2Ff4a813e5-1bf4-4241-a50f-e069d7e905d9.jpg",
-      });
+        url: "https://gymbros-beta.vercel.app",
+      };
+
+      if (sharePhoto) {
+        const res = await fetch(sharePhoto);
+        const blob = await res.blob();
+
+        const file = new File([blob], "entrenando.png", {
+          type: blob.type,
+        });
+
+        shareData.files = [file];
+      }
+
+      navigator.share(shareData);
     } else {
       const url = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`;
       window.open(url, "_blank");
@@ -108,10 +123,10 @@ export default function DashboardClient({ session, users }: Props) {
           <h1 className="text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
             Gymbros 🏋️‍♂️
           </h1>
-
+          {/* 
           <h3 className="text-1xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
             Hola, {session.user?.name}
-          </h3>
+          </h3> */}
         </div>
         <div className="justify-items-center items-center gap-5 flex flex-col">
           <h3 className="text-xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">

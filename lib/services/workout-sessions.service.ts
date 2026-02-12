@@ -3,7 +3,11 @@ import { getDB } from "../infrastructure/mongo-client.infra";
 import { uploadFileToVercel } from "../infrastructure/vercel-blob.infra";
 import { DbTables } from "../types/db-tables.enum";
 import { ObjectId } from "mongodb";
-import { getWeekEndDate, getWeekStartDate } from "../utils/date";
+import {
+  getRegionCurrentDate,
+  getWeekEndDate,
+  getWeekStartDate,
+} from "../utils/date";
 
 export async function recordSession(userId: string, file: File) {
   const extension = file.name.split(".").pop();
@@ -20,7 +24,7 @@ export async function recordSession(userId: string, file: File) {
     photoUrl,
   });
 
-  return result;
+  return { photoUrl };
 }
 
 export async function getUsersSessions(userIds?: string[]): Promise<
@@ -34,10 +38,9 @@ export async function getUsersSessions(userIds?: string[]): Promise<
 > {
   const db = await getDB();
 
-  const today = new Date();
+  const today = getRegionCurrentDate();
   const weekStart = getWeekStartDate(today);
   const weekEnd = getWeekEndDate(today);
-  weekEnd.setUTCDate(weekEnd.getUTCDate() + 1);
 
   const users = await db.collection(DbTables.USERS).find({}).toArray();
 

@@ -1,0 +1,15 @@
+.days-trained {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  justify-content: center;
+}
+
+.green-text {
+  color: white;
+  text-shadow:
+    0 0 2px #ffffff,
+    0 0 5px #00ff66,
+    0 0 10px #00ff66,
+    0 0 20px #00ff66;
+}

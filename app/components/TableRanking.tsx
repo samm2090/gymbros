@@ -1,6 +1,8 @@
 "use client";
 
+import { getWeekDay } from "@/lib/utils/date";
 import SessionPhoto from "./SessionPhoto";
+import "./tableRanking.css";
 
 type Props = {
   users: {
@@ -16,6 +18,24 @@ type Props = {
 };
 
 export default function TableRanking({ users }: Props) {
+  const getDaysList = (
+    workoutSessions: { photoUrl: string; timestamp: Date }[],
+  ) => {
+    const days = ["L", "M", "M", "J", "V", "S", "D"];
+
+    return days.map((day, index) => {
+      const hasTrained = workoutSessions.some(
+        (session: { photoUrl: string; timestamp: Date }) =>
+          getWeekDay(session.timestamp) === index + 1,
+      );
+
+      return {
+        day,
+        hasTrained,
+      };
+    });
+  };
+
   return (
     <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
       <table className="w-full border-collapse text-sm">
@@ -50,11 +70,25 @@ export default function TableRanking({ users }: Props) {
                   {user.isWinner ? "👑" : ""}
                 </div>
               </td>
-
               <td className="px-4 py-3">
-                {user?.workoutSessions?.length || 0}/7
+                <div
+                  style={{ fontSize: 18, fontWeight: 600, marginBottom: 10 }}
+                >
+                  {user?.workoutSessions?.length
+                    ? `+${user?.workoutSessions?.length}`
+                    : 0}
+                </div>
+                <div className="days-trained">
+                  {getDaysList(user?.workoutSessions)?.map((date, i) => (
+                    <span
+                      className={date.hasTrained ? "green-text" : ""}
+                      key={i}
+                    >
+                      {date.day}
+                    </span>
+                  ))}
+                </div>
               </td>
-
               <td className="px-4 py-3">
                 <SessionPhoto
                   photoUrl={user?.workoutSessions[0]?.photoUrl}
