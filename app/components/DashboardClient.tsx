@@ -1,4 +1,5 @@
 "use client";
+import "./dashboardClient.css";
 
 import {
   formatDate,
@@ -9,10 +10,10 @@ import {
   getWeekStartDate,
 } from "@/lib/utils/date";
 import { Session } from "next-auth";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import TableRanking from "./TableRanking";
+import Statistics from "./Statistics";
 
 type Props = {
   session: Session;
@@ -41,6 +42,8 @@ export default function DashboardClient({ session, users }: Props) {
   const weekEnd = formatDate(getWeekEndDate(today));
 
   const myData = users.find((user) => user._id === session?.user?.id);
+
+  const [activeTab, setActiveTab] = useState<"ranking" | "stats">("ranking");
 
   users.forEach((user) => {
     user.workoutSessions.forEach((session) => {
@@ -130,31 +133,59 @@ export default function DashboardClient({ session, users }: Props) {
           <h1 className="text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
             Gymbros 🏋️‍♂️
           </h1>
-          {/* 
-          <h3 className="text-1xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            Hola, {session.user?.name}
-          </h3> */}
         </div>
-        <div className="justify-items-center items-center gap-5 flex flex-col">
-          <h3 className="text-xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            Semana {weekNumber} ({weekStart} - {weekEnd})
-          </h3>
-          <TableRanking users={users}></TableRanking>
+        <div className="w-full max-w-md flex bg-zinc-800 rounded-xl p-1">
+          <button
+            onClick={() => setActiveTab("ranking")}
+            className={`flex-1 py-2 rounded-lg text-center transition ${
+              activeTab === "ranking" ? "bg-white text-black" : "text-zinc-300"
+            }`}
+          >
+            Ranking
+          </button>
+
+          <button
+            onClick={() => setActiveTab("stats")}
+            className={`flex-1 py-2 rounded-lg text-center transition ${
+              activeTab === "stats" ? "bg-white text-black" : "text-zinc-300"
+            }`}
+          >
+            Stats
+          </button>
         </div>
+        <div>
+          {activeTab === "ranking" && (
+            <div className="justify-items-center items-center gap-5 flex flex-col">
+              <h3 className="text-xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+                Semana {weekNumber} ({weekStart} - {weekEnd})
+              </h3>
+              <TableRanking users={users} />
+            </div>
+          )}
+          {activeTab === "stats" && <Statistics />}
+        </div>
+
         {!isWorkoutRegisteredToday && (
           <>
             {" "}
-            <button
-              className="flex h-12 items-center 
-        justify-center rounded-full border 
-        border-solid border-black/[.08] 
-        px-5 transition-colors hover:border-transparent 
-        hover:bg-black/[.04] dark:border-white/[.145] 
-        dark:hover:bg-[#1a1a1a] cursor-pointer"
-              onClick={registerWorkout}
+            <div
+              className="relative mb-10 inline-block rounded-full p-[2px]
+                            bg-gradient-to-r from-pink-500 via-yellow-400 via-green-400 via-blue-500 to-purple-500
+                            animate-rainbow shadow-[0_0_20px_rgba(255,0,255,0.4)]"
             >
-              {isLoading ? "Procesando..." : "Registrar entreno 💪"}
-            </button>
+              <button
+                className="flex h-12 items-center justify-center
+                  rounded-full bg-white/90 backdrop-blur-md
+                  dark:bg-black/80
+                  px-6 text-sm font-medium
+                  transition-all duration-300
+                  hover:scale-[1.03]
+                  cursor-pointer"
+                onClick={registerWorkout}
+              >
+                {isLoading ? "Procesando..." : "Registrar entreno 💪"}
+              </button>
+            </div>
             <input
               ref={inputRef}
               type="file"
@@ -165,17 +196,6 @@ export default function DashboardClient({ session, users }: Props) {
             />
           </>
         )}
-        <button
-          className="flex h-10 items-center 
-        justify-center rounded-full border 
-        border-solid border-black/[.08] 
-        px-5 transition-colors hover:border-transparent 
-        hover:bg-black/[.04] dark:border-white/[.145] 
-        dark:hover:bg-[#1a1a1a] cursor-pointer text-xs mb-10"
-          onClick={() => signOut()}
-        >
-          Salir
-        </button>
       </div>
       {shareMessage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">

@@ -1,0 +1,9 @@
+@keyframes rainbow-border {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.animate-rainbow {
+  background-size: 200% 200%;
+  animation: rainbow-border 4s linear infinite;
+}

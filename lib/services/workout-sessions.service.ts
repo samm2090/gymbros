@@ -27,7 +27,7 @@ export async function recordSession(userId: string, file: File) {
   return { photoUrl };
 }
 
-export async function getUsersSessions(userIds?: string[]): Promise<
+export async function getUsersWorkouts(userIds?: string[]): Promise<
   {
     _id: string;
     name: string;
@@ -116,4 +116,42 @@ export async function getUsersSessions(userIds?: string[]): Promise<
   //     },
   //   ])
   //   .toArray();
+}
+
+export async function getStatistics(): Promise<
+  {
+    _id: string;
+    name: string;
+    totalWorkoutSessions: number;
+  }[]
+> {
+  const db = await getDB();
+
+  const users = await db.collection(DbTables.USERS).find({}).toArray();
+
+  let allWorkoutSessions = await db
+    .collection(DbTables.WORKOUT_SESSIONS_LEGACY)
+    .find({})
+    .toArray();
+  allWorkoutSessions = allWorkoutSessions.concat(
+    await db.collection(DbTables.WORKOUT_SESSIONS_LEGACY).find({}).toArray(),
+  );
+
+  console.log(allWorkoutSessions.length);
+
+  const response = users.map((user) => {
+    const userWorkoutSessions = allWorkoutSessions.filter(
+      (workout) => String(workout.userId) === String(user._id),
+    );
+
+    return {
+      _id: String(user._id),
+      name: user.name,
+      totalWorkoutSessions: userWorkoutSessions.length,
+    };
+  });
+
+  response.sort((a, b) => b.totalWorkoutSessions - a.totalWorkoutSessions);
+
+  return response;
 }
