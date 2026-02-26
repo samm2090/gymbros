@@ -130,14 +130,12 @@ export async function getStatistics(): Promise<
   const users = await db.collection(DbTables.USERS).find({}).toArray();
 
   let allWorkoutSessions = await db
-    .collection(DbTables.WORKOUT_SESSIONS_LEGACY)
+    .collection(DbTables.WORKOUT_SESSIONS)
     .find({})
     .toArray();
   allWorkoutSessions = allWorkoutSessions.concat(
     await db.collection(DbTables.WORKOUT_SESSIONS_LEGACY).find({}).toArray(),
   );
-
-  console.log(allWorkoutSessions.length);
 
   const response = users.map((user) => {
     const userWorkoutSessions = allWorkoutSessions.filter(
