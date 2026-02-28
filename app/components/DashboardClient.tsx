@@ -150,7 +150,7 @@ export default function DashboardClient({ session, users }: Props) {
             </span>
           </h3>
         </div>
-        <div className="w-full max-w-md flex bg-zinc-800 rounded-xl p-1">
+        <div className="w-full max-w-full flex bg-zinc-800 rounded-xl p-1">
           <button
             onClick={() => setActiveTab("ranking")}
             className={`flex-1 py-2 rounded-lg text-center transition ${
@@ -176,14 +176,14 @@ export default function DashboardClient({ session, users }: Props) {
             Calendario
           </button>
         </div>
-        <div>
+        <div className="w-full max-w-full">
           {activeTab === "ranking" && (
-            <div className="justify-items-center items-center gap-5 flex flex-col">
+            <div key="raking" className="justify-items-center items-center gap-5 flex flex-col">
               <TableRanking users={users} />
             </div>
           )}
-          {activeTab === "stats" && <Statistics />}
-          {activeTab === "calendar" && <MyCalendar />}
+          {activeTab === "stats" && <Statistics key="statistics" />}
+          {activeTab === "calendar" && <MyCalendar key="myCalendar" />}
         </div>
 
         {!isWorkoutRegisteredToday && (

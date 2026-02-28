@@ -143,11 +143,15 @@ export async function getStatistics(): Promise<
     const userWorkoutSessions = allWorkoutSessions.filter(
       (workout) => String(workout.userId) === String(user._id),
     );
+    userWorkoutSessions.sort((a, b) => a.timestamp - b.timestamp);
+
+    const firstWorkoutSession = userWorkoutSessions[0];
 
     return {
       _id: String(user._id),
       name: user.name,
       totalWorkoutSessions: userWorkoutSessions.length,
+      firstWorkoutSessionDate: firstWorkoutSession?.timestamp,
     };
   });
 

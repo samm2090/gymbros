@@ -37,3 +37,20 @@ export function getWeekEndDate(date: Date) {
   const dateTime = DateTime.fromJSDate(date);
   return dateTime.endOf("week").endOf("day").toJSDate();
 }
+
+export function getMonthsDiff(
+  initialDateInput: Date | string,
+  lastDateInput: Date | string,
+) {
+  const initialDate =
+    typeof initialDateInput === "string"
+      ? DateTime.fromISO(initialDateInput)
+      : DateTime.fromJSDate(initialDateInput);
+
+  const lastDate =
+    typeof lastDateInput === "string"
+      ? DateTime.fromISO(lastDateInput)
+      : DateTime.fromJSDate(lastDateInput);
+
+  return Math.floor(lastDate.diff(initialDate, "months").months) || 0;
+}
