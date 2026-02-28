@@ -1,8 +1,8 @@
 "use client";
 
-import { getRandomNumber } from "@/lib/utils/number";
+import { getRandomNumber } from "@/lib/utils/number.util";
 import "./sessionPhoto.css";
-import { formatDate } from "@/lib/utils/date";
+import { formatDate } from "@/lib/utils/date.util";
 
 type Props = {
   photoUrl: string;

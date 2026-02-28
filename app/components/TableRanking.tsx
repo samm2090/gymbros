@@ -1,6 +1,6 @@
 "use client";
 
-import { getWeekDay } from "@/lib/utils/date";
+import { getWeekDay } from "@/lib/utils/date.util";
 import SessionPhoto from "./SessionPhoto";
 import "./tableRanking.css";
 

@@ -7,7 +7,7 @@ import {
   getRegionCurrentDate,
   getWeekEndDate,
   getWeekStartDate,
-} from "../utils/date";
+} from "../utils/date.util";
 
 export async function recordSession(userId: string, file: File) {
   const extension = file.name.split(".").pop();
@@ -18,7 +18,7 @@ export async function recordSession(userId: string, file: File) {
   const photoUrl = await uploadFileToVercel(filenameAndPath, file);
   const db = await getDB();
 
-  const result = await db.collection(DbTables.WORKOUT_SESSIONS).insertOne({
+  await db.collection(DbTables.WORKOUT_SESSIONS).insertOne({
     userId: new ObjectId(userId),
     timestamp: new Date(),
     photoUrl,
@@ -27,7 +27,9 @@ export async function recordSession(userId: string, file: File) {
   return { photoUrl };
 }
 
-export async function getUsersWorkouts(userIds?: string[]): Promise<
+export async function getCurrentWeeklyUsersWorkouts(
+  userIds?: string[],
+): Promise<
   {
     _id: string;
     name: string;
@@ -152,4 +154,23 @@ export async function getStatistics(): Promise<
   response.sort((a, b) => b.totalWorkoutSessions - a.totalWorkoutSessions);
 
   return response;
+}
+
+export async function getUserWorkOuts(userId: string) {
+  const db = await getDB();
+
+  let allWorkoutSessions = await db
+    .collection(DbTables.WORKOUT_SESSIONS)
+    .find({ userId: new ObjectId(userId) })
+    .toArray();
+  allWorkoutSessions = allWorkoutSessions.concat(
+    await db
+      .collection(DbTables.WORKOUT_SESSIONS_LEGACY)
+      .find({ userId: new ObjectId(userId) })
+      .toArray(),
+  );
+
+  allWorkoutSessions.sort((a, b) => b.timestamp - a.timestamp);
+
+  return allWorkoutSessions;
 }

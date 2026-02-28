@@ -24,3 +24,36 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.react-calendar {
+  width: 100%;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+}
+
+.react-calendar__month-view__weekdays {
+  text-transform: lowercase;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.react-calendar__tile {
+  background: transparent;
+  border-radius: 8px;
+  padding: 6px 0;
+  color: white;
+}
+
+.react-calendar__tile:enabled:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.react-calendar__tile--now {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.react-calendar__navigation {
+  display: none;
+}
+
